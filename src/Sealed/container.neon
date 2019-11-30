@@ -1,0 +1,2 @@
+services:
+	- Grifart\PHPStanRules\Sealed\SealedUtils

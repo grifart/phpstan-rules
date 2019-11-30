@@ -1,0 +1,5 @@
+includes:
+	- src/Sealed/container.neon
+
+rules:
+	- Grifart\PHPStanRules\Sealed\SealedClassesRule
