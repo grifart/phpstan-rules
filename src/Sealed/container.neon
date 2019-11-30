@@ -1,2 +1,6 @@
 services:
 	- Grifart\PHPStanRules\Sealed\SealedUtils
+
+
+rules:
+	- Grifart\PHPStanRules\Sealed\SealedClassesRule

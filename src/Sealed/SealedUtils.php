@@ -27,12 +27,17 @@ final class SealedUtils
 	 * Resolves if given class is sealed.
 	 */
 	public function isSealed(ClassReflection $classReflection): bool {
+		$docBlock = $classReflection->getNativeReflection()->getDocComment();
+		if ($docBlock === FALSE) {
+			return FALSE;
+		}
+
 		$docBlock = $this->docBlockAnalyzer->getResolvedPhpDoc(
 			$classReflection->getFileName(),
 			$classReflection->getName(),
 			null,
 			null,
-			$classReflection->getNativeReflection()->getDocComment()
+			$docBlock
 		);
 		$tags = $docBlock->getPhpDocNode()->getTagsByName('@sealed');
 		return count($tags) > 0;
@@ -43,9 +48,9 @@ final class SealedUtils
 	 */
 	public function getSealedParent(string $className): ?ClassReflection {
 		$classReflection = $this->broker->getClass($className);
-		while (($parent = $classReflection->getParentClass()) !== FALSE) {
-			if ($this->isSealed($parent)) {
-				return $parent;
+		while (($classReflection = $classReflection->getParentClass()) !== FALSE) {
+			if ($this->isSealed($classReflection)) {
+				return $classReflection;
 			}
 		}
 		return NULL;
