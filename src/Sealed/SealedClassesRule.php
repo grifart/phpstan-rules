@@ -5,9 +5,8 @@ namespace Grifart\PHPStanRules\Sealed;
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 use PHPStan\Broker\Broker;
-use PHPStan\Reflection\ClassReflection;
+use PHPStan\Broker\ClassNotFoundException;
 use PHPStan\Rules\Rule;
-use PHPStan\Type\FileTypeMapper;
 
 /**
  * @implements \PHPStan\Rules\Rule<\PhpParser\Node\Stmt\Class_>
@@ -44,7 +43,17 @@ class SealedClassesRule implements Rule {
 			return [];
 		}
 
-		$sealedParent = $this->utils->getSealedParent($node->namespacedName->toString());
+		try {
+			$parentReflection = $this->broker->getClass($node->extends->toString());
+
+		} catch (ClassNotFoundException $e) {
+			// Could not find parent class, this is strange.
+			// Anyway this should be checked by PHPStan internal rules
+			// so just ignore it for now
+			return [];
+		}
+		$sealedParent = $this->utils->findSealedParentReflection($parentReflection);
+
 		if ($sealedParent === NULL) {
 			return [];
 		}
@@ -54,7 +63,8 @@ class SealedClassesRule implements Rule {
 		if ($scope->getFile() !== $sealedParent->getFileName()) {
 			return [
 				\sprintf(
-					'You cannot extend sealed class %s outside of declaring file %s.',
+					"Class %s cannot extend sealed class %s outside of declaring file %s.\nSee https://kotlinlang.org/docs/reference/sealed-classes.html for more information what sealed classes are.",
+					!$node->isAnonymous() ? $node->namespacedName->toString() : '<anonymous>',
 					$sealedParent->getName(),
 					$sealedParent->getFileName()
 				)

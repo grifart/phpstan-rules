@@ -4,7 +4,6 @@
 namespace Grifart\PHPStanRules\Sealed;
 
 
-use PHPStan\Broker\Broker;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Type\FileTypeMapper;
 
@@ -14,13 +13,9 @@ final class SealedUtils
 	/** @var FileTypeMapper */
 	private $docBlockAnalyzer;
 
-	/** @var Broker */
-	private $broker;
-
-	public function __construct(FileTypeMapper $docBlockAnalyzer, Broker $broker)
+	public function __construct(FileTypeMapper $docBlockAnalyzer)
 	{
 		$this->docBlockAnalyzer = $docBlockAnalyzer;
-		$this->broker = $broker;
 	}
 
 	/**
@@ -46,13 +41,12 @@ final class SealedUtils
 	/**
 	 * Search for the sealed parent in class hierarchy
 	 */
-	public function getSealedParent(string $className): ?ClassReflection {
-		$classReflection = $this->broker->getClass($className);
-		while (($classReflection = $classReflection->getParentClass()) !== FALSE) {
-			if ($this->isSealed($classReflection)) {
-				return $classReflection;
+	public function findSealedParentReflection(ClassReflection $reflection): ?ClassReflection {
+		do {
+			if ($this->isSealed($reflection)) {
+				return $reflection;
 			}
-		}
+		} while (($reflection = $reflection->getParentClass()) !== FALSE);
 		return NULL;
 	}
 
