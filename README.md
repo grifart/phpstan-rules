@@ -101,6 +101,24 @@ switch (getclass($value)): {
 
 Type system should know that default case is unreachable, because there cannot be any other type decalared anywhere.
 
+## Overriding property in child class
+
+````php
+class BasePresenter {
+
+  /** @var Dependency */
+  private $dep;
+
+}
+
+class LoginPresenter extends BasePresenter {
+
+  /** @var Dependency2 */
+  private $dep; // error
+
+}
+````
+
 ## require_once return value used
 
 This is usually not what you expect.
