@@ -107,14 +107,14 @@ Type system should know that default case is unreachable, because there cannot b
 class BasePresenter {
 
   /** @var Dependency */
-  private $dep;
+  public $dep;
 
 }
 
 class LoginPresenter extends BasePresenter {
 
   /** @var Dependency2 */
-  private $dep; // error
+  public $dep; // error
 
 }
 ````
