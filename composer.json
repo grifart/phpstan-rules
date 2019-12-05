@@ -1,7 +1,7 @@
 {
     "name": "grifart/phpstan-rules",
     "type": "library",
-    "description": "Fills the gaps of type system in PHP.",
+    "description": "Fills missing pieces of the PHP type system.",
     "license": "BSD-3-Clause",
     "authors": [
         {
